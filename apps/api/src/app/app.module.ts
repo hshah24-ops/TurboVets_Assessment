@@ -1,10 +1,26 @@
 import { Module } from '@nestjs/common';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
+import { User } from './entities/user.entity';
+import { Organization } from './entities/organization.entity';
+import { Role } from './entities/role.entity';
+import { Permission } from './entities/permission.entity';
+import { Task } from './entities/task.entity';
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT) || 5432,
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'admin',
+      database: process.env.DB_NAME || 'secure_task_manager',
+      entities: [User, Organization, Role, Permission, Task],
+      synchronize: true, // ⚠️ Keep this true only for development!
+    }),
+    TypeOrmModule.forFeature([User, Organization, Role, Permission, Task]),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

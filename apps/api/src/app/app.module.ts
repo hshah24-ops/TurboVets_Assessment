@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { Organization } from './entities/organization.entity';
 import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
+import { TaskModule } from './task.module';
 import { Task } from './entities/task.entity';
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Task } from './entities/task.entity';
       synchronize: true, // ⚠️ Keep this true only for development!
     }),
     TypeOrmModule.forFeature([User, Organization, Role, Permission, Task]),
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

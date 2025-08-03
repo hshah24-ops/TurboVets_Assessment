@@ -22,7 +22,8 @@ export class TaskController {
 
   @Put(':id')
   updateTask(@Param('id') id: string, @Body() data: Partial<Task>) {
-    return this.taskService.update(+id, data);
+  console.log('PUT /tasks called');  
+  return this.taskService.update(+id, data);
   }
 
   @Delete(':id')

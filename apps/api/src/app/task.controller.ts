@@ -5,7 +5,7 @@ import { Task } from './entities/task.entity';
 @Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {
-console.log('TaskController Loaded');
+  console.log('TaskController Loaded');
 }
 
   @Get()
@@ -16,7 +16,8 @@ console.log('TaskController Loaded');
 
   @Post()
   createTask(@Body() data: Partial<Task>) {
-    return this.taskService.create(data);
+  console.log('POST /tasks called');  
+  return this.taskService.create(data);
   }
 
   @Put(':id')

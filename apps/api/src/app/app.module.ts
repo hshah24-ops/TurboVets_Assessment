@@ -10,6 +10,7 @@ import { TaskModule } from './task.module';
 import { Task } from './entities/task.entity';
 import { AuditLog } from './entities/audit-log.entity';
 import { AuditLogModule } from './audit-log.module';
+import { RoleModule } from './role.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -25,6 +26,7 @@ import { AuditLogModule } from './audit-log.module';
     TypeOrmModule.forFeature([User, Organization, Role, Permission, Task, AuditLog]),
     TaskModule,
     AuditLogModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

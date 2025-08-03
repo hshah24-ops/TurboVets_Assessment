@@ -8,6 +8,8 @@ import { Role } from './entities/role.entity';
 import { Permission } from './entities/permission.entity';
 import { TaskModule } from './task.module';
 import { Task } from './entities/task.entity';
+import { AuditLog } from './entities/audit-log.entity';
+import { AuditLogModule } from './audit-log.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -17,11 +19,12 @@ import { Task } from './entities/task.entity';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'admin',
       database: process.env.DB_NAME || 'secure_task_manager',
-      entities: [User, Organization, Role, Permission, Task],
+      entities: [User, Organization, Role, Permission, Task, AuditLog],
       synchronize: true, // ⚠️ Keep this true only for development!
     }),
-    TypeOrmModule.forFeature([User, Organization, Role, Permission, Task]),
+    TypeOrmModule.forFeature([User, Organization, Role, Permission, Task, AuditLog]),
     TaskModule,
+    AuditLogModule,
   ],
   controllers: [AppController],
   providers: [AppService],

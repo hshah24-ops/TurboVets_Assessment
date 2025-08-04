@@ -11,6 +11,9 @@ import { Task } from './entities/task.entity';
 import { AuditLog } from './entities/audit-log.entity';
 import { AuditLogModule } from './audit-log.module';
 import { RoleModule } from './role.module';
+import { AuthModule } from './auth.module';
+import { UserModule } from './user.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -24,9 +27,12 @@ import { RoleModule } from './role.module';
       synchronize: true, // ⚠️ Keep this true only for development!
     }),
     TypeOrmModule.forFeature([User, Organization, Role, Permission, Task, AuditLog]),
+    ConfigModule.forRoot({ isGlobal: true }),
     TaskModule,
     AuditLogModule,
     RoleModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

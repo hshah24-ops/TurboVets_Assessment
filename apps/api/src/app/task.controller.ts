@@ -3,9 +3,10 @@ import { TaskService } from './task.service';
 import { Task } from './entities/task.entity';
 import { PermissionsGuard } from './permissions.guard';   
 import { Permissions } from './permissions.decorator';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('tasks')
-@UseGuards(PermissionsGuard) 
+@UseGuards(JwtAuthGuard, PermissionsGuard) 
 export class TaskController {
   constructor(private readonly taskService: TaskService) {
   console.log('TaskController Loaded');

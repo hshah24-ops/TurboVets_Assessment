@@ -1,41 +1,44 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleService } from './role.service';
-import { PERMISSION_KEY } from './permissions.decorator';
+import { RoleService } from './role.service'; 
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private readonly roleService: RoleService,
+    private roleService: RoleService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredPermission = this.reflector.get<string>(
-      PERMISSION_KEY,
-      context.getHandler(),
-    );
+    // Get required permissions from custom decorator (we’ll create it next)
+    const requiredPermissions = this.reflector.get<string[]>('permissions', context.getHandler());
 
-    // 🟢 Log what permission is being checked
-    console.log('🔍 [Guard] Required Permission:', requiredPermission);
-
-    if (!requiredPermission) {
-      console.log('⚠️ [Guard] No permission metadata found, allowing access.');
+    if (!requiredPermissions || requiredPermissions.length === 0) {
+      // No permissions required, allow access
       return true;
     }
 
-    // ✅ TEMP: mock user role ID (replace with JWT later)
-    const mockUserRoleId = 3;
-    console.log('[Guard] Checking permissions for Role ID:', mockUserRoleId);
+    const request = context.switchToHttp().getRequest();
 
-    // Call RoleService.hasPermission and log result
-    const hasPermission = await this.roleService.hasPermission(
-      mockUserRoleId,
-      requiredPermission,
-    );
+    // Assuming user info (with roleId) is attached to request object after JWT auth
+    const user = request.user;
+    if (!user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
 
-    console.log('[Guard] Permission check result:', hasPermission);
+    const roleId = user.roleId;
+    if (!roleId) {
+      throw new ForbiddenException('User has no role assigned');
+    }
 
-    return hasPermission;
+    // Check if user's role (including inherited roles) has ANY of the required permissions
+    for (const permission of requiredPermissions) {
+      const hasPerm = await this.roleService.hasPermission(roleId, permission);
+      if (hasPerm) {
+        return true;
+      }
+    }
+
+    throw new ForbiddenException('You do not have permission (guard)');
   }
 }

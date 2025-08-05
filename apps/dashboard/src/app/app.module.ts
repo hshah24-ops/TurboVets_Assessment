@@ -11,6 +11,7 @@ import { TaskListComponent } from './tasks/task-list/task-list.component';
 import { AuditLogComponent } from './audit-log/audit-log.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthInterceptor } from './auth.interceptor';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { AuthInterceptor } from './auth.interceptor';
     FormsModule,
     HttpClientModule,
     RouterModule,
-    AppRoutingModule
+    AppRoutingModule,
+    DragDropModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }

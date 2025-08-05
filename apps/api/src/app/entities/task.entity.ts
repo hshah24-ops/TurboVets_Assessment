@@ -16,6 +16,15 @@ export class Task {
   @Column({ default: false })
   completed!: boolean;
 
+  @Column({ nullable: true })
+  category?: string;  
+
+  @Column({ default: 'Todo' })
+  status!: string;   // e.g., Todo, InProgress, Done
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt!: Date;
+
   @ManyToOne(() => User, user => user.id)
   owner!: User;
 

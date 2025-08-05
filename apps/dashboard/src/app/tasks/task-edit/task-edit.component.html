@@ -1,0 +1,30 @@
+<div class="p-5 max-w-md mx-auto">
+  <h2 class="text-xl font-bold mb-4">Edit Task</h2>
+
+  <!-- Title Input -->
+  <input 
+    [(ngModel)]="task.title" 
+    placeholder="Task Title" 
+    class="border p-2 w-full mb-2"
+  />
+
+  <!-- Description Input -->
+  <textarea 
+    [(ngModel)]="task.description" 
+    placeholder="Task Description" 
+    class="border p-2 w-full mb-2">
+  </textarea>
+
+  <!-- Completed Checkbox -->
+  <label class="flex items-center space-x-2">
+    <input type="checkbox" [(ngModel)]="task.completed" /> 
+    <span>Completed</span>
+  </label>
+
+  <!-- Save Button -->
+  <button 
+    (click)="save()" 
+    class="bg-green-600 text-white px-4 py-2 rounded mt-3 w-full">
+    Save
+  </button>
+</div>

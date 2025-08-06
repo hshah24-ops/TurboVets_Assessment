@@ -173,7 +173,9 @@ Response:
 - **Backend**: Jest tests for RBAC guards, authentication, and task endpoints.
 - **Frontend**: Karma/Jest tests for components and state logic.  
     
-
+**Screenshots**
+- All UI screenshots are stored in the ['Screenshots/'] folder.
+  
 **Future Considerations**
 
 - **JWT Refresh Tokens** for better security.

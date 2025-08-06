@@ -139,7 +139,7 @@ Response:
 
 { "access_token": "jwt_token" }
 
-**📌 Tasks**
+**Tasks**
 
 | **Method** | **Endpoint** | **Permissions** |
 | --- | --- | --- |

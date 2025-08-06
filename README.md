@@ -1,109 +1,191 @@
-# SecureTaskManager
+**Secure Task Management System (NX Monorepo)**
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A full-stack application for **managing tasks securely** using **Role-Based Access Control (RBAC)** and **JWT authentication**.  
+Built with **NestJS (backend)**, **Angular (frontend)**, and **PostgreSQL**.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+**Features**
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+- **JWT-based Authentication**
+- **Role-Based Access Control (RBAC)** with role inheritance
+- **Organization-based task scoping**
+- **Tasks CRUD (Create, View, Edit, Delete)** with permissions enforcement
+- **Angular Dashboard** for managing tasks
+- **NX Monorepo** for clean modular architecture
+- **Audit Logging** of task actions
 
-## Generate a library
+**Setup Instructions**
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
-```
+**1 Clone the Repository**
 
-## Run tasks
+git clone <https://github.com/hshah24-ops/TurboVets_Assessment.git>
 
-To build the library use:
+cd secure-task-management
 
-```sh
-npx nx build pkg1
-```
+**2 Install Dependencies**
 
-To run any task with Nx use:
+npm install
 
-```sh
-npx nx <target> <project-name>
-```
+**3 Setup Environment Variables**
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+Create a .env file at the root:
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+\# Database Config
 
-## Versioning and releasing
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=admin
+DB_NAME=secure_task_manager
 
-To version and release the library use
+\# JWT Secret
 
-```
-npx nx release
-```
+JWT_SECRET=9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+**4 Run PostgreSQL Database**
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Make sure PostgreSQL is running, and create the database:
 
-## Keep TypeScript project references up to date
+createdb secure_task_manager
 
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+**5 Run Backend (NestJS API)**
 
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
+nx serve api
 
-```sh
-npx nx sync
-```
+- Runs on: [**http://localhost:3000**](http://localhost:3000)
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+**6 Run Frontend (Angular Dashboard)**
 
-```sh
-npx nx sync:check
-```
+nx serve dashboard
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+- Runs on: [**http://localhost:4200**](http://localhost:4200)
 
-## Set up CI!
+**Architecture Overview**
 
-### Step 1
+**NX Monorepo Structure**
 
-To connect to Nx Cloud, run the following command:
+apps/
 
-```sh
-npx nx connect
-```
+├─ api/ # NestJS backend
+└─ dashboard/ # Angular frontend
+└─ auth/ # Shared RBAC logic & decorators
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+libs/
+├─ data/ # Shared DTOs & interfaces
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+**Rationale**
 
-### Step 2
+- **Separation of concerns**: Backend and frontend are modular but share types and auth logic via libs/.
+- **Scalable RBAC**: Permissions and role checks are centralized in guards and services.
 
-Use the following command to configure a CI workflow for your workspace:
+**Data Model Explanation**
 
-```sh
-npx nx g ci-workflow
-```
+**Entities**
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **User**: Belongs to an organization and has a role.
+- **Role**: Defines permissions (Owner, Admin, Viewer) and may inherit from a parent role.
+- **Permission**: Defines actions (create_task, edit_task, delete_task, view_task).
+- **Organization**: Groups users and tasks.
+- **Task**: Belongs to an organization and is owned by a user.
+- **AuditLog**: Records actions performed by users.
 
-## Install Nx Console
+**ERD Diagram**
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+Organization ───&lt; User &gt;─── Role >───< Permission
+│                                   │
+└─────────────────────< Task ───────┘
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+**Access Control Implementation**
 
-## Useful links
+**Roles & Permissions**
 
-Learn more:
+| **Role** | **Permissions** |
+| --- | --- |
+| **Owner** | All permissions |
+| **Admin** | Create, Edit, Delete, View tasks |
+| **Viewer** | Only View tasks |
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+**Role Inheritance**
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- Viewer < Admin < Owner
+- A role inherits permissions from its parent role.
+
+**Organization Hierarchy**
+
+- Users can only manage tasks within their organization.
+- Even if a user has permissions, they are **restricted to tasks of their org**.
+
+**JWT Authentication**
+
+- Upon login, a JWT is issued containing { userId, email, roleId, organizationId }.
+- Angular stores the JWT in **localStorage** and attaches it to all API requests via **AuthInterceptor**.
+- Backend validates the JWT in every request using **JwtStrategy** and populates req.user.
+
+**API Documentation**
+
+**Base URL**
+<http://localhost:3000/api>
+
+**Endpoints**
+
+** Authentication**
+
+- POST /auth/login
+
+Request:
+
+{ "email": "<test@example.com>", "password": "password" }
+
+Response:
+
+{ "access_token": "jwt_token" }
+
+**📌 Tasks**
+
+| **Method** | **Endpoint** | **Permissions** |
+| --- | --- | --- |
+| GET | /tasks | view_task |
+| POST | /tasks | create_task |
+| PUT | /tasks/:id | edit_task |
+| DELETE | /tasks/:id | delete_task |
+
+
+**Example Response: GET /tasks**
+
+\[
+{ "id": 1, "title": "Task 1", "status": "Todo", "organizationId": 1 },
+
+{ "id": 2, "title": "Task 2", "status": "Done", "organizationId": 1 }
+\]
+
+**Audit Log**
+
+- GET /audit-log – Owners/Admins only
+
+**How Roles & Permissions Work**
+
+- Permissions are checked in **PermissionsGuard** using metadata from @Permissions().
+- Guard ensures:
+    1. User has the required permission.
+    2. The task belongs to the same organization as the user.
+
+**Testing Strategy**
+
+- **Backend**: Jest tests for RBAC guards, authentication, and task endpoints.
+- **Frontend**: Karma/Jest tests for components and state logic.  
+    
+
+**Future Considerations**
+
+- **JWT Refresh Tokens** for better security.
+- **CSRF Protection** for frontend requests.
+- **Caching Role Permissions** to optimize RBAC checks.
+- **Delegated Role Management** for enterprise use cases.
+- **Scaling** with microservices or GraphQL gateway.
+
+**Users & Their Abilities**
+
+| **User** | **Role** | **Org** | **Abilities** |
+| --- | --- | --- | --- |
+| test@example | Viewer | 1   | View only tasks in Org 1 |
+| viewer@example | Viewer | 2   | View only tasks in Org 2 |
+| seed@example | Owner | 2   | Full access to Org 2 tasks |
